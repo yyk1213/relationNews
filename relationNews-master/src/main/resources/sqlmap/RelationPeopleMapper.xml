@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naver.news.batch.relation.dao.RelatedPersonMapper">
+	<resultMap id="relationGroup" type="com.naver.news.batch.relation.dbmodel.Related_People">
+	   <id column="related_person_id" jdbcType="INTEGER" property="related_person_id"/>
+	   <result column="related_person_id" jdbcType="INTEGER" property="related_person_id"/>
+	</resultMap>
+	<select id="selectRelationPeople" parameterType="java.lang.Integer" resultMap="relationGroup">
+		select person_id, related_person_id, count(*) as count
+		from related_person
+		where person_id=#{person_id,jdbcType=INTEGER}
+		group by related_person_id
+		order by count(*) DESC
+	</select>
+</mapper>

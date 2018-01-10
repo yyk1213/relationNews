@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        ttp://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<util:properties id="db" location="classpath:db-properties.xml" />
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="#{db.driver}" />
+		<property name="url" value="#{db.url}" />
+		<property name="username" value="#{db.username}" />
+		<property name="password" value="#{db.password}" />
+		<property name="maxWait" value="#{db.maxWait}" />
+		<property name="initialSize" value="#{db.initialSize}" />
+		<property name="maxActive" value="#{db.maxActive}" />
+		<property name="maxIdle" value="#{db.maxIdle}" />
+		<property name="minIdle" value="#{db.minIdle}" />
+		<property name="poolPreparedStatements" value="#{db.poolPreparedStatements}" />
+		<property name="validationQuery" value="#{db.validationQuery}" />
+		<property name="testWhileIdle" value="#{db.testWhileIdle}" />
+		<property name="testOnBorrow" value="#{db.testOnBorrow}" />
+		<property name="timeBetweenEvictionRunsMillis" value="#{db.timeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="#{db.numTestsPerEvictionRun}" />
+		<property name="minEvictableIdleTimeMillis" value="#{db.minEvictableIdleTimeMillis}" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+    </bean>
+		
+    <context:annotation-config />
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+        p:dataSource-ref="dataSource" p:mapperLocations="classpath:sqlmap/*.xml"
+        p:typeAliasesPackage="com.naver.news" />
+
+    <bean id="sqlSessionTemplate-admin" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory" />
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.naver.news.batch.relation.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    
+</beans>

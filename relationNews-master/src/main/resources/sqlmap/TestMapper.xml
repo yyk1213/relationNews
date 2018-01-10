@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naver.news.batch.relation.dao.TestMapper">
+	<resultMap id="BaseResultMap" type="com.naver.news.batch.relation.dbmodel.Test">
+		<id column="name" jdbcType="VARCHAR" property="name" />
+		<result column="reg_time" jdbcType="TIMESTAMP" property="regTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		name, reg_time
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from test
+		where name = #{name,jdbcType=VARCHAR}
+	</select>
+	<resultMap id="relationGroup" type="com.naver.news.batch.relation.dbmodel.Related_person">
+	   <id column="related_person_id" jdbcType="INTEGER" property="related_person_id"/>
+	   <result column="related_person_id" jdbcType="INTEGER" property="related_person_id"/>
+	</resultMap>
+	<select id="selectRelationPeople" parameterType="java.lang.Integer" resultMap="relationGroup">
+		select person_id, related_person_id, count(*) as count
+		from related_person
+		where person_id=#{person_id,jdbcType=INTEGER}
+		group by related_person_id
+		order by count(*) DESC
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from test
+		where name = #{name,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.naver.news.batch.relation.dbmodel.Test">
+		insert into test (name, reg_time)
+		values (#{name,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.naver.news.batch.relation.dbmodel.Test">
+		insert into test
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			<if test="regTime != null">
+				reg_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="regTime != null">
+				#{regTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.naver.news.batch.relation.dbmodel.Test">
+		update test
+		<set>
+			<if test="regTime != null">
+				reg_time = #{regTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where name = #{name,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.naver.news.batch.relation.dbmodel.Test">
+		update test
+		set reg_time = #{regTime,jdbcType=TIMESTAMP}
+		where name = #{name,jdbcType=VARCHAR}
+	</update>
+	
+	
+</mapper>
